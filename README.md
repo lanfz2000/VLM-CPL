@@ -2,7 +2,7 @@
 
 ### Overall Framework
 There are three steps to train the classification network.
-![overall](https://github.com/lanfz2000/VLM-CPL/blob/main/overall.png)
+![overall](https://github.com/lanfz2000/VLM-CPL/blob/main/overall-1.png)
 
 ### Data prepare
 Download the HPH dataset [here](https://data.mendeley.com/datasets/h8bdwrtnr5/1)
