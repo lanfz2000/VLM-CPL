@@ -1,7 +1,7 @@
 # VLM-CPL
 
 ### Overall Framework
-There are three branches based on different attention mechanisms and two losses in our framework
+There are three steps to train the classification network.
 ![overall](https://github.com/lanfz2000/VLM-CPL/blob/main/overall.png)
 
 ### Data prepare
