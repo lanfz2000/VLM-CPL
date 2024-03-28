@@ -6,11 +6,12 @@ import os
 import time
 from sklearn import metrics
 import numpy as np
-from .utils import cls_recall, cluster_filter
 from dataset.alb_dataset import Tumor_dataset, Tumor_dataset_val, get_loader
 import pandas as pd
 from open_clip import create_model_from_pretrained, get_tokenizer
 import random 
+from sklearn.cluster import KMeans
+from evaluate_util import hungarian_evaluate
 
 def seed_torch(seed=42):
     random.seed(seed)
@@ -21,6 +22,24 @@ def seed_torch(seed=42):
     torch.cuda.manual_seed_all(seed)
     torch.backends.cudnn.benchmark = False
     torch.backends.cudnn.deterministic = True
+
+def cls_recall(args, pred_array, target):
+    pred, gt = np.zeros((args.num_class,)), np.zeros((args.num_class,))
+    for i in range(len(target)):
+        gt[target[i]] += 1
+        if target[i]==pred_array[i]:
+            pred[target[i]] += 1
+    print(pred/gt, pred, gt)
+    return pred/gt
+
+def cluster_filter(args, feature_all, y_preds):
+    cluster_learner = KMeans(n_clusters=args.num_class, init='k-means++', n_init='auto')
+    cluster_learner.fit(feature_all)
+    cluster_idxs = cluster_learner.predict(feature_all)
+    cluster_pred = np.array(cluster_idxs, dtype=np.uint8)
+    hungarian_results = hungarian_evaluate(torch.tensor(y_preds).cpu(), torch.tensor(cluster_pred).cpu())
+    reordered_preds = hungarian_results['reordered_preds']
+    return reordered_preds.numpy()==y_preds, reordered_preds
 
 def get_files(data_root):
     new_file = []
